@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper
+		PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+		"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="ProductMapper">
+ 	
+ 	
+	<resultMap id="productSelectMap" type="product">
+		<result property="fileName" 	column="image_file" 		jdbcType="VARCHAR"/>
+		<result property="manuDate"		column="manufacture_day" 	jdbcType="VARCHAR" />
+		<result property="price" 		column="price" 				jdbcType="NUMERIC" />
+		<result property="prodDetail" 	column="prod_detail" 		jdbcType="VARCHAR" />
+		<result property="prodName" 	column="prod_name" 			jdbcType="VARCHAR" />
+		<result property="prodNo" 		column="prod_no" 			jdbcType="NUMERIC" />
+		<result property="regDate" 		column="reg_date" 			jdbcType="DATE" />
+		<result property="proTranCode"	column="tran_status_code"	jdbcType="VARCHAR"/>
+	</resultMap>
+	
+	
+	<resultMap id="wishListSelectMap" type="wishList">
+		<result property="customerId" 	column="customer_id" 		jdbcType="VARCHAR"/>
+		<result property="productNo" 	column="product_no" 		jdbcType="NUMERIC"/>
+		<result property="wishedDate" 	column="wished_date" 			jdbcType="DATE"/>
+		
+		<association property="wishedProd"  javaType="product">
+			<id property="prodNo" column="prod_no" jdbcType="NUMERIC"/>
+			<result property="prodName" column="prod_name" jdbcType="VARCHAR"/>
+			<result property="prodDetail" column="prod_detail" jdbcType="VARCHAR"/>
+			<result property="manuDate" column="manufacture_day" jdbcType="VARCHAR"/>
+			<result property="price" column="price" jdbcType="NUMERIC"/>
+			<result property="fileName" column="image_file" jdbcType="VARCHAR"/>
+			<result property="regDate" column="reg_date" jdbcType="DATE"/>
+			<result property="proTranCode" column="tran_status_code" jdbcType="VARCHAR"/>
+		</association>
+	</resultMap>
+	
+	<!-- SQL : INSERT -->
+	 <insert 	id="insertProduct"		parameterType="product" >
+		INSERT 
+		INTO 
+		product 
+		VALUES (seq_product_prod_no.nextval, #{prodName}, #{prodDetail}, #{manuDate}, #{price}, #{fileName}, sysdate)
+	 </insert>
+	 
+	 <insert 	id="insertWishList"		parameterType="wishList" >
+		INSERT 
+		INTO 
+		wishlist 
+		VALUES (#{productNo}, #{customerId}, sysdate)
+	 </insert>
+	 
+	 <select 	id="getProduct"	parameterType="product"	resultMap="productSelectMap">
+	 	SELECT
+	 	*
+	 	FROM product
+	 	where prod_no = #{prodNo}
+	 </select>
+	 
+	 <update	id="updateProduct"	parameterType="product" >
+		UPDATE product 
+		<set> 
+		prod_name=#{prodName},
+		prod_detail=#{prodDetail},
+		manufacture_day=#{manuDate},
+		price=#{price}, 
+		image_file=#{fileName} 
+	   	</set>
+	   	WHERE prod_no=#{prodNo}
+	 </update>
+		 
+
+	<select  id="getWishList"  parameterType="search"	resultMap="wishListSelectMap">
+		SELECT * 
+		FROM (	SELECT inner_table.* , ROWNUM AS row_seq 
+						FROM 		(	SELECT w.product_no, w.customer_id, w.wished_date, p.prod_name, vt.tran_status_code, p.price, p.prod_detail
+										FROM wishlist w, product p, (	SELECT prod_name, NVL(t.tran_status_code,'0') tran_status_code
+																						FROM product p, transaction t
+																						WHERE p.prod_no=t.prod_no(+)
+																		)vt
+										WHERE w.customer_id=#{searchKeyword} AND w.product_no=p.prod_no AND vt.prod_name=p.prod_name
+	 									<if test="orderByPrice==1">
+											ORDER BY p.price ASC
+										</if>
+										<if test="orderByPrice==2">
+											ORDER BY p.price DESC
+										</if> 
+										)inner_table 
+						WHERE ROWNUM &lt;= #{endRowNum} )
+		WHERE row_seq BETWEEN #{startRowNum} AND #{endRowNum} 
+	 </select>
+	 
+	 <select  id="getProductList"  parameterType="search"	resultMap="productSelectMap">
+		SELECT *
+	  	FROM (	SELECT inner_table.* , ROWNUM AS row_seq
+	  					FROM		(	SELECT p.prod_no, p.prod_name, p.price, p.prod_detail, p.reg_date, NVL(t.tran_status_code,'0') tran_status_code
+										FROM product p, transaction t
+										WHERE p.prod_no=t.prod_no(+)
+										<if test="startPrice!='' and startPrice!=null and endPrice!='' and endPrice!=null ">
+											AND p.price BETWEEN #{startPrice} AND #{endPrice}
+										</if>
+										<if test="searchCondition!=null">
+											<if test="searchCondition==1 and searchKeyword!='' ">
+												AND p.prod_name like '%${searchKeyword}%'
+											</if>
+											<if test="searchCondition==2 and searchKeyword!='' ">
+												AND p.price=#{searchKeyword}
+											</if>
+										</if>
+										<if test="orderByPrice==1">
+											ORDER BY p.price ASC
+										</if>
+										<if test="orderByPrice==2">
+											ORDER BY p.price DESC
+										</if>
+										) inner_table
+						WHERE ROWNUM &lt;= #{endRowNum} )
+		WHERE row_seq BETWEEN #{startRowNum} AND #{endRowNum} 
+	 </select>
+	 
+	 <select id="checkWishList" parameterType="wishList"	resultType="int">
+	 	SELECT COUNT(*)
+	 	FROM(			SELECT product_no 
+	 					FROM wishlist
+	 					WHERE customer_id=#{customerId} AND product_no=#{productNo}
+	 					)countTable
+	 </select>
+	 
+	 <delete id="deleteWishList" parameterType="wishList" >
+	 	DELETE 
+		FROM wishlist
+		WHERE product_no=#{productNo} AND customer_id=#{customerId}
+	 </delete>
+		
+	 <select id="getWishListCount" parameterType="wishList"	 resultType="int">
+	 	SELECT COUNT(*)
+	 	FROM(			SELECT product_no 
+	 					FROM wishlist
+	 					WHERE customer_id=#{customerId}
+	 					)countTable
+	 </select>
+	 
+	 <select  id="getPeopleCount"  parameterType="wishList"	 resultType="int">
+	  	SELECT COUNT(*)
+		FROM(			SELECT *
+						FROM wishlist
+						WHERE product_no=#{productNo}
+						)countTable		
+	 </select> 
+	 
+	 <select  id="getTotalCount"  parameterType="search"	 resultType="int">
+	  	SELECT COUNT(*)
+	  	FROM(			SELECT prod_name , prod_no , price
+						FROM product
+						<where>
+						<if test="searchCondition != null">
+								<if test="searchCondition == 1 and searchKeyword !='' ">
+						 			prod_name like '%${searchKeyword}%'
+								</if>
+								<if test="searchCondition == 2 and searchKeyword !='' ">
+						 			price = #{searchKeyword}
+								</if>
+						</if>
+						<if test="startPrice!=null and endPrice!=null and startPrice!='' and endPrice!='' ">
+						AND price BETWEEN #{startPrice} AND #{endPrice}
+						</if>
+						</where> 
+						) countTable						
+	 </select> 
+	 
+</mapper>
