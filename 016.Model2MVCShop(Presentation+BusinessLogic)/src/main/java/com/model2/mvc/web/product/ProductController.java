@@ -54,8 +54,10 @@ public class ProductController {
 	public String addProduct( @ModelAttribute("product") Product product, Model model ) throws Exception {
 
 		System.out.println("/addProduct.do");
-		productService.addProduct(product);
 		System.out.println("/addProductControll내:"+product);
+		
+		productService.addProduct(product);
+		
 		model.addAttribute("product", product);
 		
 		return "forward:/product/addProduct.jsp";
@@ -66,38 +68,27 @@ public class ProductController {
 
 		System.out.println("/deleteWishList.do");
 		System.out.println(wishList);
-		String userId=((User)session.getAttribute("user")).getUserId();
-		wishList.setCustomerId(userId);
-
+		
+		wishList.setCustomerId(((User)session.getAttribute("user")).getUserId());
 		
 		productService.deleteWishList(wishList);
 		
-		return "forward:/product/listWishList.do?";
+		return "redirect:/listWishList.do";
 	}
 	
 	@RequestMapping("/addWishList.do")
 	public String addWishList( @ModelAttribute("wishList") WishList wishList, HttpSession session, Model model ) throws Exception {
 		
-		
-		boolean isDuplicate=true;
-		String userId=((User)session.getAttribute("user")).getUserId();
-		String destination="forward:/product/readProduct.jsp?isDuplicate="+isDuplicate;
-		
-		wishList.setCustomerId(userId);
+		wishList.setCustomerId(((User)session.getAttribute("user")).getUserId());
 		
 		System.out.println("/addWishList.do");
 		System.out.println("addWishList 내 wishList"+wishList);
+		
 		if(!productService.checkWishList(wishList)){
 			productService.addWishList(wishList);
-			isDuplicate=false;
-			destination="forward:/product/readProduct.jsp";
 		}
 		
-		Product product=new Product();
-		product=productService.getProduct(wishList.getProductNo());
-		model.addAttribute("wishList", wishList);
-		model.addAttribute("product", product);
-		return destination;
+		return "redirect:/listWishList.do";
 	}
 	
 	@RequestMapping("/getProduct.do")
@@ -139,7 +130,7 @@ public class ProductController {
 		System.out.println("/updateProductView.do");
 		
 		Product product = productService.getProduct(prodNo);
-		// Model 과 View 연결
+		
 		model.addAttribute("product", product);
 		
 		return "forward:/product/updateProductView.jsp";
@@ -149,7 +140,7 @@ public class ProductController {
 	public String updateProduct( @ModelAttribute("product") Product product , Model model ) throws Exception{
 
 		System.out.println("/updateProduct.do");
-		//Business Logic
+		
 		productService.updateProduct(product);
 		
 		return "redirect:/getProduct.do?prodNo="+product.getProdNo();
@@ -167,7 +158,9 @@ public class ProductController {
 		Map<String , Object> map=productService.getProductList(search);
 		User user=(User)session.getAttribute("user");
 		Page resultPage = new Page( search.getCurrentPage(), ((Integer)map.get("totalCount")).intValue(), pageUnit, pageSize);
+		
 		System.out.println(map.get("list"));
+		
 		model.addAttribute("list", map.get("list"));
 		model.addAttribute("role", user.getRole());
 		model.addAttribute("menu", menu);
@@ -187,8 +180,7 @@ public class ProductController {
 		}
 		
 		search.setPageSize(pageSize);
-		String userId=((User)session.getAttribute("user")).getUserId();
-		search.setSearchKeyword(userId);
+		search.setSearchKeyword(((User)session.getAttribute("user")).getUserId());
 		Map<String , Object> map =productService.getWishList(search);
 		Page resultPage = new Page( search.getCurrentPage(), ((Integer)map.get("totalCount")).intValue(), pageUnit, pageSize);
 
@@ -198,7 +190,6 @@ public class ProductController {
 		modelAndView.addObject("resultPage", resultPage);
 		modelAndView.addObject("search", search);
 		modelAndView.setViewName("/product/listWishList.jsp");
-		
 		
 		return modelAndView;
 	}

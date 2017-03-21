@@ -16,6 +16,7 @@
 		<result property="prodNo" 		column="prod_no" 			jdbcType="NUMERIC" />
 		<result property="regDate" 		column="reg_date" 			jdbcType="DATE" />
 		<result property="proTranCode"	column="tran_status_code"	jdbcType="VARCHAR"/>
+		<result property="countLiked" 	column="count_liked" 		jdbcType="NUMERIC" />
 	</resultMap>
 	
 	
@@ -53,9 +54,9 @@
 	 
 	 <select 	id="getProduct"	parameterType="product"	resultMap="productSelectMap">
 	 	SELECT
-	 	*
-	 	FROM product
-	 	where prod_no = #{prodNo}
+		p.*, NVL(t.tran_status_code,0) tran_status_code
+		FROM product p, transaction t
+		WHERE p.prod_no = #{prodNo} AND p.prod_no=t.prod_no(+)
 	 </select>
 	 
 	 <update	id="updateProduct"	parameterType="product" >
@@ -94,9 +95,13 @@
 	 <select  id="getProductList"  parameterType="search"	resultMap="productSelectMap">
 		SELECT *
 	  	FROM (	SELECT inner_table.* , ROWNUM AS row_seq
-	  					FROM		(	SELECT p.prod_no, p.prod_name, p.price, p.prod_detail, p.reg_date, NVL(t.tran_status_code,'0') tran_status_code
-										FROM product p, transaction t
-										WHERE p.prod_no=t.prod_no(+)
+	  					FROM		(	SELECT p.prod_no, p.prod_name, p.price, p.prod_detail, p.reg_date, NVL(t.tran_status_code,'0') tran_status_code, NVL(vt.count,'0') count_liked
+										FROM product p, transaction t, (	SELECT product_no, count(product_no) count
+																			FROM wishlist w, product p
+																			WHERE w.product_no=p.prod_no
+																			GROUP BY product_no
+																		)vt
+										WHERE p.prod_no=t.prod_no(+) AND vt.product_no(+)=p.prod_no
 										<if test="startPrice!='' and startPrice!=null and endPrice!='' and endPrice!=null ">
 											AND p.price BETWEEN #{startPrice} AND #{endPrice}
 										</if>
@@ -133,21 +138,19 @@
 		WHERE product_no=#{productNo} AND customer_id=#{customerId}
 	 </delete>
 		
-	 <select id="getWishListCount" parameterType="wishList"	 resultType="int">
+	 <select id="getTotalCountForWish" parameterType="hashmap"	 resultType="int">
 	 	SELECT COUNT(*)
 	 	FROM(			SELECT product_no 
 	 					FROM wishlist
-	 					WHERE customer_id=#{customerId}
+	 					WHERE
+	 					<if test="searchCondition==1">
+	 							product_no=#{productNo}
+	 					</if>
+	 					<if test="searchCondition==2">
+	 							customer_id=#{customerId}
+	 					</if>
 	 					)countTable
 	 </select>
-	 
-	 <select  id="getPeopleCount"  parameterType="wishList"	 resultType="int">
-	  	SELECT COUNT(*)
-		FROM(			SELECT *
-						FROM wishlist
-						WHERE product_no=#{productNo}
-						)countTable		
-	 </select> 
 	 
 	 <select  id="getTotalCount"  parameterType="search"	 resultType="int">
 	  	SELECT COUNT(*)

@@ -97,7 +97,7 @@
 			</c:if>
 			<td align="center">${tranCode}</td>
 			<td></td>
-			<td align="center">${wishList.numberOfPeople}</td>
+			<td align="center">${wishList.likeCount}</td>
 			<td></td>
 		</tr>
 	</c:forEach>

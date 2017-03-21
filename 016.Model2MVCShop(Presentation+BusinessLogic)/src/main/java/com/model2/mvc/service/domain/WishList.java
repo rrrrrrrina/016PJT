@@ -8,7 +8,7 @@ public class WishList {
 	private String customerId;
 	private int productNo;
 	private boolean isDuplicate;
-	private int numberOfPeople;
+	private int likeCount;
 	private Product wishedProd; 
 	private Date wishedDate;
 	
@@ -47,14 +47,6 @@ public class WishList {
 		this.productNo = productNo;
 	}
 
-	public int getNumberOfPeople() {
-		return numberOfPeople;
-	}
-
-	public void setNumberOfPeople(int numberOfPeople) {
-		this.numberOfPeople = numberOfPeople;
-	}
-
 	public Product getWishedProd() {
 		return wishedProd;
 	}
@@ -63,13 +55,19 @@ public class WishList {
 		this.wishedProd = wishedProd;
 	}
 
+	public int getLikeCount() {
+		return likeCount;
+	}
+
+	public void setLikeCount(int likeCount) {
+		this.likeCount = likeCount;
+	}
+
 	@Override
 	public String toString() {
 		return "WishList [customerId=" + customerId + ", productNo=" + productNo + ", isDuplicate=" + isDuplicate
-				+ ", numberOfPeople=" + numberOfPeople + ", wishedProd=" + wishedProd + ", wishedDate=" + wishedDate
+				+ ", wishedProd=" + wishedProd + ", wishedDate=" + wishedDate
 				+ "]";
 	}
-	
-
 	
 }

@@ -40,7 +40,6 @@ public class ProductServiceImpl implements ProductService{
 		
 		Map<String, Object> map = new HashMap<String, Object>();
 		map.put("list",list);
-		System.out.println("totalCount:"+totalCount);
 		map.put("totalCount",new Integer(totalCount));
 
 		return map;
@@ -48,7 +47,6 @@ public class ProductServiceImpl implements ProductService{
 	
 	public Map<String , Object > getWishList(Search search) throws Exception {
 		Map<String , Object > map=productDAO.getWishList(search);
-		int totalCount=productDAO.getTotalCount(search);
 
 		return map;
 	}

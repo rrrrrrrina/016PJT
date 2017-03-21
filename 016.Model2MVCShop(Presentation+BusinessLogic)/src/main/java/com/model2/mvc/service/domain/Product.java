@@ -13,6 +13,7 @@ public class Product {
 	private int prodNo;
 	private Date regDate;
 	private String proTranCode;
+	private int countLiked;
 	
 	public Product(){
 	}
@@ -69,11 +70,19 @@ public class Product {
 	public void setRegDate(Date regDate) {
 		this.regDate = regDate;
 	}
+	public int getCountLiked() {
+		return countLiked;
+	}
+
+	public void setCountLiked(int countLiked) {
+		this.countLiked = countLiked;
+	}
+
 	@Override
 	public String toString() {
 		return "Product [fileName=" + fileName + ", manuDate=" + manuDate + ", price=" + price + ", prodDetail="
 				+ prodDetail + ", prodName=" + prodName + ", prodNo=" + prodNo + ", regDate=" + regDate
-				+ ", proTranCode=" + proTranCode + "]";
+				+ ", proTranCode=" + proTranCode + ", countLiked=" + countLiked + "]";
 	}
 
 }

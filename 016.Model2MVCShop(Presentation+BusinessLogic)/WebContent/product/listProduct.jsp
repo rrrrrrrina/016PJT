@@ -168,7 +168,7 @@
 			</c:if>
 			</td>
 			<td></td>
-			<td align="center">${product.regDate}</td>
+			<td align="center">${product.countLiked}</td>
 			<td></td>
 		</tr>
 	</c:forEach>

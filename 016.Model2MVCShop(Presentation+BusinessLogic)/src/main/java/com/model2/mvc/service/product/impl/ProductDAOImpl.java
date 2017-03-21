@@ -44,19 +44,24 @@ public class ProductDAOImpl implements ProductDAO {
 	
 	public Map<String, Object> getWishList(Search search) throws Exception{
 		Map<String , Object>  map = new HashMap<String, Object>();
+		Map<String , Object>  temp = new HashMap<String, Object>();
 		
 		List<WishList> wishList= sqlSession.selectList("ProductMapper.getWishList",search);
 		
 		for (int i = 0; i < wishList.size(); i++) {
-			String temp=wishList.get(i).getWishedProd().getProTranCode();
 			Product product=sqlSession.selectOne("ProductMapper.getProduct",wishList.get(i).getProductNo());
-			product.setProTranCode(temp);
-			
 			wishList.get(i).setWishedProd(product);
-			wishList.get(i).setNumberOfPeople(sqlSession.selectOne("ProductMapper.getPeopleCount",wishList.get(i)));
+
+			temp.put("searchCondition", "1");
+			temp.put("productNo", wishList.get(i).getProductNo());
+			
+			wishList.get(i).setLikeCount(sqlSession.selectOne("ProductMapper.getTotalCountForWish",temp));
 		}
 		
-		map.put("totalCount", sqlSession.selectOne("ProductMapper.getWishListCount", search.getSearchKeyword()));
+		temp.put("searchCondition", "2");
+		temp.put("customerId", search.getSearchKeyword());
+		System.out.println("ddddddddddddddddddddddddddddd"+temp);
+		map.put("totalCount", sqlSession.selectOne("ProductMapper.getTotalCountForWish", temp));
 		map.put("list", wishList);
 		
 		return map;
