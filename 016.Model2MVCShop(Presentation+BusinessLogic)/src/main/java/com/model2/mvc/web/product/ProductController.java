@@ -14,6 +14,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -28,6 +29,8 @@ import com.model2.mvc.service.user.UserService;
 
 //==> 회원관리 Controller
 @Controller
+@RequestMapping("/product/*")
+
 public class ProductController {
 	
 	///Field
@@ -50,10 +53,10 @@ public class ProductController {
 	//@Value("#{commonProperties['pageSize'] ?: 2}")
 	int pageSize;
 	
-	@RequestMapping("/addProduct.do")
+	@RequestMapping(value="addProduct", method=RequestMethod.POST)
 	public String addProduct( @ModelAttribute("product") Product product, Model model ) throws Exception {
 
-		System.out.println("/addProduct.do");
+		System.out.println("/addProduct");
 		System.out.println("/addProductControll내:"+product);
 		
 		productService.addProduct(product);
@@ -63,20 +66,20 @@ public class ProductController {
 		return "forward:/product/addProduct.jsp";
 	}
 	
-	@RequestMapping("/deleteWishList.do")
+	@RequestMapping(value="deleteWishList", method=RequestMethod.GET)
 	public String deleteWishList( @ModelAttribute("wishList") WishList wishList, HttpSession session, Model model ) throws Exception {
 
-		System.out.println("/deleteWishList.do");
+		System.out.println("/deleteWishList");
 		System.out.println(wishList);
 		
 		wishList.setCustomerId(((User)session.getAttribute("user")).getUserId());
 		
 		productService.deleteWishList(wishList);
 		
-		return "redirect:/listWishList.do";
+		return "redirect:/product/listWishList";
 	}
 	
-	@RequestMapping("/addWishList.do")
+	@RequestMapping(value="addWishList", method=RequestMethod.GET)
 	public String addWishList( @ModelAttribute("wishList") WishList wishList, HttpSession session, Model model ) throws Exception {
 		
 		wishList.setCustomerId(((User)session.getAttribute("user")).getUserId());
@@ -88,25 +91,26 @@ public class ProductController {
 			productService.addWishList(wishList);
 		}
 		
-		return "redirect:/listWishList.do";
+		return "redirect:/product/listWishList";
 	}
 	
-	@RequestMapping("/getProduct.do")
+	@RequestMapping(value="getProduct", method=RequestMethod.GET)
 	public String getProduct( @ModelAttribute("product") Product product, @RequestParam(value="menu", defaultValue="no") String menu, HttpSession session, Model model ) throws Exception {
 		
-		System.out.println("/getProduct.do");
+		System.out.println("/getProduct");
 		String destination="readProduct.jsp";
 		boolean isDuplicate=true;
 		
 		Product product2=productService.getProduct(product.getProdNo());
 		product2.setProTranCode(product.getProTranCode());
-		
 		if(menu.equals("manage")){
 			destination="updateProductView.jsp";
 		}else if(menu.equals("search")){
 			session.getAttribute("user");
+
 			List<Integer> history=(ArrayList<Integer>)session.getAttribute("history");
 			history.add(product.getProdNo());
+
 			session.setAttribute("history", history);
 		}
 		
@@ -120,14 +124,13 @@ public class ProductController {
 		
 		model.addAttribute("product", product2);
 		model.addAttribute("isDuplicate", isDuplicate);
-		
 		return "forward:/product/"+destination;
 	}
 	
-	@RequestMapping("/updateProductView.do")
-	public String updateProductView( @RequestParam("prodNo") int prodNo , Model model ) throws Exception{
+	@RequestMapping(value="updateProduct", method=RequestMethod.GET)
+	public String updateProduct( @RequestParam("prodNo") int prodNo , Model model ) throws Exception{
 
-		System.out.println("/updateProductView.do");
+		System.out.println("/updateProductView");
 		
 		Product product = productService.getProduct(prodNo);
 		
@@ -136,20 +139,20 @@ public class ProductController {
 		return "forward:/product/updateProductView.jsp";
 	}
 	
-	@RequestMapping("/updateProduct.do")
+	@RequestMapping(value="updateProduct", method=RequestMethod.POST)
 	public String updateProduct( @ModelAttribute("product") Product product , Model model ) throws Exception{
 
-		System.out.println("/updateProduct.do");
+		System.out.println("/updateProduct");
 		
 		productService.updateProduct(product);
 		
-		return "redirect:/getProduct.do?prodNo="+product.getProdNo();
+		return "redirect:/product/getProduct?prodNo="+product.getProdNo();
 	}
 	
-	@RequestMapping("/listProduct.do")
+	@RequestMapping(value="listProduct")
 	public String listProduct( @ModelAttribute("search") Search search , @RequestParam("menu") String menu, Model model , HttpServletRequest request, HttpSession session) throws Exception{
 		
-		System.out.println("/listProduct.do");
+		System.out.println("/listProduct");
 		if(search.getCurrentPage() ==0 ){
 			search.setCurrentPage(1);
 		}
@@ -170,10 +173,10 @@ public class ProductController {
 		return "forward:/product/listProduct.jsp";
 	}
 	
-	@RequestMapping("/listWishList.do")
+	@RequestMapping(value="listWishList", method=RequestMethod.GET)
 	public ModelAndView listWishList( @ModelAttribute("search") Search search , Model model , HttpSession session) throws Exception{
 		
-		System.out.println("/listWishList.do?");
+		System.out.println("/listWishList");
 		System.out.println("listWishListController내:"+search);
 		if(search.getCurrentPage() ==0 ){
 			search.setCurrentPage(1);

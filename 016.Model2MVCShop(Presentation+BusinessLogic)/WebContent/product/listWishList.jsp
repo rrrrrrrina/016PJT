@@ -26,7 +26,7 @@
 
 <div style="width:98%; margin-left:10px;">
 
-<form name="detailForm" action="/listProduct.do?menu=${menu}" method="post">
+<form name="detailForm" action="/product/listProduct?menu=${menu}" method="post">
 
 <table width="100%" height="37" border="0" cellpadding="0"	cellspacing="0">
 						
@@ -59,8 +59,8 @@
 		<td class="ct_list_b" width="150">상품명</td>
 		<td class="ct_line02"></td>
 		<td class="ct_list_b" width="150">가격
-		<a href="/listWishList.do?orderByPrice=1&menu=${menu}">(▲)</a>
-		<a href="/listWishList.do?orderByPrice=2&menu=${menu}">(▼)</a>
+		<a href="/product/listWishList?orderByPrice=1&menu=${menu}">(▲)</a>
+		<a href="/product/listWishList?orderByPrice=2&menu=${menu}">(▼)</a>
 		<td class="ct_line02"></td>
 		<td class="ct_list_b" width="300">상품정보</td>
 		<td class="ct_line02"></td>
@@ -82,7 +82,7 @@
 			<td align="center">${i}</td>
 		<td></td>
 			<td align="center">
-				<a href="/getProduct.do?prodNo=${wishList.wishedProd.prodNo}&menu=${menu}&proTranCode=${wishList.wishedProd.proTranCode}">${wishList.wishedProd.prodName}</a>
+				<a href="/product/getProduct?prodNo=${wishList.wishedProd.prodNo}&menu=${menu}&proTranCode=${wishList.wishedProd.proTranCode}">${wishList.wishedProd.prodName}</a>
 			</td>
 		<td></td>
 		<td align="center">${wishList.wishedProd.price}</td>

@@ -37,12 +37,11 @@
 		</association>
 	</resultMap>
 	
-	<!-- SQL : INSERT -->
 	 <insert 	id="insertProduct"		parameterType="product" >
 		INSERT 
 		INTO 
 		product 
-		VALUES (seq_product_prod_no.nextval, #{prodName}, #{prodDetail}, #{manuDate}, #{price}, #{fileName}, sysdate)
+		VALUES (seq_product_prod_no.nextval, #{prodName}, #{prodDetail}, #{manuDate}, #{price}, #{fileName}, sysdate, #{countLiked:NUMERIC} )
 	 </insert>
 	 
 	 <insert 	id="insertWishList"		parameterType="wishList" >

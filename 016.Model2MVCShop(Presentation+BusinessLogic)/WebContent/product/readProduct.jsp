@@ -136,29 +136,28 @@
 						
 					<c:if test='${isDuplicate}'>
 						<td background="/images/ct_btnbg02.gif" class="ct_btn01" style="padding-top: 3px;">
-							<a href="/deleteWishList.do?productNo=${product.prodNo}">찜하기취소</a></td>
+							<a href="/product/deleteWishList?productNo=${product.prodNo}">찜하기취소</a></td>
 					</c:if>
 					<c:if test='${!isDuplicate}'>
 						<td background="/images/ct_btnbg02.gif" class="ct_btn01" style="padding-top: 3px;">
-							<a href="/addWishList.do?productNo=${product.prodNo}">찜하기</a></td>
+							<a href="/product/addWishList?productNo=${product.prodNo}">찜하기</a></td>
 					</c:if>
 					<td width="14" height="23">
 						<img src="/images/ct_btnbg03.gif" width="14" height="23">
 					</td>
 					<td width="25"></td>
-				
-				<td width="17" height="23">
-					<img src="/images/ct_btnbg01.gif" width="17" height="23"/>
-				</td>
-					<td background="/images/ct_btnbg02.gif" class="ct_btn01" style="padding-top: 3px;">
-						<a href="/addPurchaseView.do?prodNo=${product.prodNo}">구매</a>
+				<c:if test='${product.proTranCode==0}'>
+					<td width="17" height="23">
+						<img src="/images/ct_btnbg01.gif" width="17" height="23"/>
 					</td>
-				
+						<td background="/images/ct_btnbg02.gif" class="ct_btn01" style="padding-top: 3px;">
+							<a href="/purchase/addPurchase?prodNo=${product.prodNo}">구매</a>
+						</td>
 				<td width="14" height="23">
 					<img src="/images/ct_btnbg03.gif" width="14" height="23">
 				</td>
 				<td width="25"></td>
-		
+				</c:if>
 				<td width="17" height="23">
 					<img src="/images/ct_btnbg01.gif" width="17" height="23"/>
 				</td>

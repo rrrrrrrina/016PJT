@@ -96,9 +96,12 @@
 	  					FROM		(	SELECT u.user_id, t.receiver_name, t.receiver_phone, t.tran_status_code, t.tran_no, t.prod_no, t.order_data
 										FROM users u, transaction t
 										WHERE u.user_id=t.buyer_id AND t.buyer_id=#{searchKeyword}
-										<!-- <if test="searchCondition!=null and searchCondition==0">
+										<if test="searchCondition!=null and searchCondition==0">
 											ORDER BY TO_CHAR(t.order_data,'YYYYMMDD') DESC
-										</if> -->
+										</if>
+										<if test="searchCondition!=null and searchCondition==1">
+											ORDER BY TO_CHAR(t.order_data,'YYYYMMDD') ASC
+										</if>
 									) inner_table
 						WHERE ROWNUM &lt;= #{endRowNum} )
 		WHERE row_seq BETWEEN #{startRowNum} AND #{endRowNum} 
@@ -120,6 +123,13 @@
 	  	FROM(			SELECT u.user_id, t.receiver_name
 						FROM users u, transaction t
 						WHERE u.user_id=t.buyer_id AND t.buyer_id=#{searchKeyword}
+						) countTable						
+	 </select>
+	 
+	 <select  id="getTotalSaleCount"  parameterType="search"	 resultType="int">
+	  	SELECT COUNT(*)
+	  	FROM(			SELECT t.receiver_name
+						FROM transaction t
 						) countTable						
 	 </select>
 	 

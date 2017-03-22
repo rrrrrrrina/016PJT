@@ -14,7 +14,7 @@
 
 <c:set var='i' value='0'/>
 	<c:forEach var="history" items="${history}">
-		<a href="/getProduct.do?prodNo=${history}&menu=search"	target="rightFrame">${history}</a><br/>
+		<a href="/product/getProduct?prodNo=${history}&menu=search"	target="rightFrame">${history}</a><br/>
 	</c:forEach>
 </body>
 </html>

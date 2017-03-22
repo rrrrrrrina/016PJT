@@ -21,7 +21,7 @@
 
 <div style="width: 98%; margin-left: 10px;">
 
-<form name="detailForm" action="/listPurchase.do" method="post">
+<form name="detailForm" action="/purchase/listPurchase" method="post">
 
 <table width="100%" height="37" border="0" cellpadding="0"	cellspacing="0">
 	<tr>
@@ -49,8 +49,8 @@
 		<td class="ct_list_b" width="150">받는분성함</td>
 		<td class="ct_line02"></td>
 		<td class="ct_list_b">&nbsp;&nbsp;&nbsp;주문날짜 
-		<a href="/listPurchase.do?searchCondition=0">(최근순▼)</a>
-		<a href="/listPurchase.do?searchCondition=1">(오래된순▲)</a></td>
+		<a href="/purchase/listPurchase?searchCondition=0">(최근순▼)</a>
+		<a href="/purchase/listPurchase?searchCondition=1">(오래된순▲)</a></td>
 		<td class="ct_line02"></td>
 		<td class="ct_list_b">배송현황</td>
 		<td class="ct_line02"></td>
@@ -68,7 +68,7 @@
 		</td>
 		<td></td>
 		<td align="center">
-			<a href="/getPurchase.do?tranNo=${purchase.tranNo}">${purchase.purchaseProd.prodName}</a>
+			<a href="/purchase/getPurchase?tranNo=${purchase.tranNo}">${purchase.purchaseProd.prodName}</a>
 		</td>
 		<td></td>
 		<td align="center">${purchase.receiverName}</td>
@@ -86,10 +86,10 @@
 					${tranCode}
 				상태 입니다.
 			<c:if test="${purchase.tranCode.trim()=='2'}">
-				<a href="/updateTranCode.do?tranNo=${purchase.tranNo}&tranCode=${purchase.tranCode}">물건도착</a>
+				<a href="/purchase/updateTranCode?tranNo=${purchase.tranNo}&tranCode=${purchase.tranCode}">물건도착</a>
 			</c:if>
 			<c:if test="${purchase.tranCode.trim()=='1'}">
-				<a href="/getPurchase.do?tranNo=${purchase.tranNo}">정보수정</a>
+				<a href="/purchase/getPurchase?tranNo=${purchase.tranNo}">정보수정</a>
 			</c:if>
 		</td>
 	</tr>

@@ -57,14 +57,12 @@ public class PurchaseServiceImpl implements PurchaseService {
 	public Map<String, Object> getPurchaseList(Search search, String buyerId) throws Exception {
 		search.setSearchKeyword(buyerId);
 		Map<String, Object> map=purchaseDAO.getPurchaseList(search);
-		int totalCount = purchaseDAO.getTotalCount(search);
 		
 		return map;
 	}
 	
 	public Map<String, Object> getSaleList(Search search) throws Exception {
 		Map<String, Object> map = purchaseDAO.getSaleList(search);
-		int totalCount = purchaseDAO.getTotalCount(search);
 		return map;
 	}
 

@@ -61,7 +61,7 @@ public class PurchaseDAOImpl implements PurchaseDAO{
 			list.get(i).setPurchaseProd((Product)sqlSession.selectOne("ProductMapper.getProduct", list.get(i).getPurchaseProd().getProdNo()));
 		}
 		
-		map.put("totalCount", sqlSession.selectOne("PurchaseMapper.getTotalCount", search.getSearchKeyword()));
+		map.put("totalCount", sqlSession.selectOne("PurchaseMapper.getTotalSaleCount",search));
 		map.put("list", list);
 
 	return map;
